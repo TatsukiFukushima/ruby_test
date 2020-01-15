@@ -1,23 +1,20 @@
-loop = 10000
-$money = 100000
-$minMoney = $money
+money = 10000
+wantMoney = 11000
 
-def betByMontecarlo()
+def betByMontecarlo(money)
+  localMoney = money
   bet = 0
   array = [1, 2, 3]
 
   loop {
     bet = array[0] + array[array.length-1]
-    if $money >= bet then
-      $money -= bet
+    if localMoney >= bet then
+      localMoney -= bet
     else
       break
     end
-    if $money < $minMoney then
-      $minMoney = $money
-    end
     if rand(2) == 1 then
-      $money = $money + bet + bet
+      localMoney = localMoney + bet + bet
       array.shift()
       array.delete_at(array.length-1)
       if array.length == 0 then
@@ -27,12 +24,24 @@ def betByMontecarlo()
       array.push(bet)
     end
   }
+  return localMoney
 end
 
-for i in 1..loop do
-  betByMontecarlo()
+def betByMontecarlos(money, wantMoney)
+  i = 0
+  localMoney = money
+  localWantMoney = wantMoney
+  loop {
+    localMoney = betByMontecarlo(localMoney)
+    i += 1
+    if localMoney >= wantMoney then
+      return [true, i]
+    elsif localMoney < 4 then
+      return [false, i]
+    end
+  }
 end
 
-puts "試行回数: #{loop}回賭ける"
-puts "最終金額: #{$money}"
-puts "最低所持金: #{$minMoney}"
+result, i = betByMontecarlos(money, wantMoney)
+puts "試行回数: #{i}回"
+puts "結果: #{result}"
