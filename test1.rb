@@ -1,6 +1,10 @@
-loop = 1000
-money = 10000
-wantMoney = 11000
+print "所持金: "
+money = gets.chomp.to_i
+print "目標金額: "
+wantMoney = gets.chomp.to_i
+print "試行回数: "
+loop = gets.chomp.to_i
+puts "--------------------"
 
 def betByMontecarlo(money)
   localMoney = money
@@ -34,20 +38,22 @@ def betByMontecarlos(money, wantMoney)
   loop {
     localMoney = betByMontecarlo(localMoney)
     if localMoney >= wantMoney then
-      return true
+      return true, localMoney
     elsif localMoney < 4 then
-      return false
+      return false, localMoney
     end
   }
 end
 
 winCount = 0
+totalMoney = 0
 for i in 1..loop do
-  if betByMontecarlos(money, wantMoney) then
+  result, lastMoney = betByMontecarlos(money, wantMoney)
+  if result then
     winCount += 1
   end
+  totalMoney += lastMoney
 end
-puts "試行回数: #{loop}回"
-puts "初期所持金: #{money}"
-puts "期待所持金: #{wantMoney}"
-puts "勝率: #{winCount * 100 / loop}"
+
+puts "勝率: #{winCount * 100 / loop.to_f}%"
+puts "期待値: #{(totalMoney / loop.to_f) - money}円"
